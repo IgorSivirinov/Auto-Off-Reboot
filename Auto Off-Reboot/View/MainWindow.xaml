@@ -1,0 +1,108 @@
+﻿<Window 
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"  
+    x:Class="Auto_Off_Reboot.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:Auto_Off_Reboot"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextElement.FontWeight="Regular"
+    TextElement.FontSize="13"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    mc:Ignorable="d"
+    MaxHeight="250" MaxWidth="430"
+    MinHeight="335" MinWidth="430"
+        Title="Auto Off-Reboot" Height="300" Width="430" Visibility="Visible" Icon="Frame 1 V-2.0.0 0.5x  .png" ResizeMode="NoResize" WindowStartupLocation="Manual" WindowStyle="ThreeDBorderWindow">
+    <Grid>
+        
+        <ComboBox
+            Name="Box"
+            materialDesign:HintAssist.Hint="Выключить/Перезагрузить"
+            FontSize="18"
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+            Margin="10,18,212,0" Height="51" VerticalAlignment="Top">
+            <ComboBoxItem IsSelected="True">
+                Выключить
+            </ComboBoxItem>
+            <ComboBoxItem>
+                Перезагрузить
+            </ComboBoxItem>
+        </ComboBox>
+
+        <materialDesign:TimePicker
+            Name="MyTimePicker"
+            FontSize="24"
+            Is24Hours="True"
+            Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
+            SelectedTimeChanged="MyTimePicker_OnSelectedTimeChanged"
+            materialDesign:HintAssist.Hint="Время"
+            Margin="10,79,212,0" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Height="50" />
+
+        <Button 
+            Name="StartButton"
+            Style="{StaticResource MaterialDesignRaisedButton}"
+            Content="Старт"
+            FontSize="32"
+            Height="59"
+            Margin="0,10,10,0" 
+            Click="Click_Start_button" IsEnabled="False" HorizontalAlignment="Right" Width="189" VerticalAlignment="Top" Grid.Column="1"/>
+
+        <Button
+            Name="CancelButton" 
+            Style="{StaticResource MaterialDesignFlatButton}"
+            Content="Отмена"
+            FontSize="22"
+            Height="55"
+            Margin="0,77,10,0" 
+            Click="Click_Cancel_button" VerticalAlignment="Top" HorizontalAlignment="Right" Width="189"/>
+
+        <materialDesign:Snackbar
+            MessageQueue="{materialDesign:MessageQueue}"
+            x:Name="SnackbarThree" Margin="11,1,11,0" Width="402" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Height="44" Grid.ColumnSpan="2" >
+            <materialDesign:Snackbar.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-0.729"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </materialDesign:Snackbar.RenderTransform>
+        </materialDesign:Snackbar>
+
+
+        <ItemsControl x:Name="ItemsControlCardsQuickTiming"  Margin="8,137,8,0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <materialDesign:Card
+                        Margin="8,8,8,8">
+                        <Grid>
+                            <Button Height="50" Width="115" Click="ClickQuickTiming"
+                                    Background="White" BorderBrush="White"
+                                    Foreground="DarkSlateGray"
+                                    
+                                    >
+                        <StackPanel>
+                                <TextBlock Text="{Binding ActionType}"/>
+                                <TextBlock Text="{Binding ActionTime}"/>
+                        </StackPanel>
+                            </Button>
+                        </Grid>
+                        
+                        </materialDesign:Card>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+           
+        </ItemsControl>
+
+    </Grid>
+</Window>
