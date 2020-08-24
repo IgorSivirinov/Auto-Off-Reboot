@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:Auto_Off_Reboot"
+    xmlns:viewModel="clr-namespace:Auto_Off_Reboot.ViewModel"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     TextElement.FontWeight="Regular"
     TextElement.FontSize="13"
@@ -16,15 +17,54 @@
     mc:Ignorable="d"
     MaxHeight="250" MaxWidth="430"
     MinHeight="335" MinWidth="430"
-        Title="Auto Off-Reboot" Height="300" Width="430" Visibility="Visible" Icon="Frame 1 V-2.0.0 0.5x  .png" ResizeMode="NoResize" WindowStartupLocation="Manual" WindowStyle="ThreeDBorderWindow">
-    <Grid>
-        
-        <ComboBox
-            Name="Box"
-            materialDesign:HintAssist.Hint="Выключить/Перезагрузить"
-            FontSize="18"
+        Title="Auto Off-Reboot" Height="300" Width="327" Visibility="Visible" Icon="Frame 1 V-2.0.0 0.5x  .png" ResizeMode="NoResize" WindowStartupLocation="Manual" WindowStyle="ThreeDBorderWindow">
+    
+    <Window.DataContext>
+        <viewModel:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <DataTemplate x:Key="ItemQuickTiming" DataType="viewModel:QuickTimingViewModel">
+                <materialDesign:Card
+                    Margin="8,8,8,8">
+                    <Grid>
+                        <Button Command="{Binding ButtonClick}" Height="50" Width="115"
+                                Style="{StaticResource MaterialDesignRaisedLightButton}">
+
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Header="Удалить" Command="{Binding DeleteMenuItem}"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+
+
+                            <StackPanel>
+                                <TextBlock Text="{Binding ActionType}"/>
+                                <TextBlock Text="{Binding StringTime}"/>
+                            </StackPanel>
+
+                        </Button>
+                    </Grid>
+                </materialDesign:Card>
+            </DataTemplate >
+        <DataTemplate x:Key="ButtonAddItemQuickTiming" DataType="viewModel:QuickTimingViewModel">
+            <Button Command="{Binding RunDialogAddItem}" Height="50" Width="115" Margin="8,8,8,8">
+                <materialDesign:PackIcon Kind="Add" />
+            </Button>
+        </DataTemplate>
+    </Window.Resources>
+
+    <materialDesign:DialogHost
+
+        IsOpen="{Binding IsDialogOpen}"
+        DialogContent="{Binding DialogContent}"
+        CloseOnClickAway="True">
+        <Grid>
+        <ComboBox Margin="10,18,212,0" Height="51" VerticalAlignment="Top"
             Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-            Margin="10,18,212,0" Height="51" VerticalAlignment="Top">
+            materialDesign:HintAssist.Hint="Выключить/Перезагрузить"
+            Text="{Binding TextComboBoxChoiceAction}"
+            FontSize="18">
             <ComboBoxItem IsSelected="True">
                 Выключить
             </ComboBoxItem>
@@ -34,35 +74,39 @@
         </ComboBox>
 
         <materialDesign:TimePicker
-            Name="MyTimePicker"
+            SelectedTime="{Binding SelectedTimeTimePicker}"
+            Text="{Binding TextTimePicker}"
             FontSize="24"
             Is24Hours="True"
             Style="{StaticResource MaterialDesignFloatingHintTimePicker}"
-            SelectedTimeChanged="MyTimePicker_OnSelectedTimeChanged"
             materialDesign:HintAssist.Hint="Время"
             Margin="10,79,212,0" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Height="50" />
 
         <Button 
-            Name="StartButton"
-            Style="{StaticResource MaterialDesignRaisedButton}"
+            Style="{StaticResource MaterialDesignRaisedLightButton}"
             Content="Старт"
+            Command="{Binding ButtonClickStart}"
+            IsEnabled="{Binding IsEnabledButtonStart}"
             FontSize="32"
             Height="59"
             Margin="0,10,10,0" 
-            Click="Click_Start_button" IsEnabled="False" HorizontalAlignment="Right" Width="189" VerticalAlignment="Top" Grid.Column="1"/>
+            HorizontalAlignment="Right" Width="189" VerticalAlignment="Top" Grid.Column="1"/>
 
         <Button
-            Name="CancelButton" 
+            Command="{Binding ButtonClickCancel}"
             Style="{StaticResource MaterialDesignFlatButton}"
             Content="Отмена"
             FontSize="22"
             Height="55"
             Margin="0,77,10,0" 
-            Click="Click_Cancel_button" VerticalAlignment="Top" HorizontalAlignment="Right" Width="189"/>
+             VerticalAlignment="Top" HorizontalAlignment="Right" Width="189"/>
 
         <materialDesign:Snackbar
-            MessageQueue="{materialDesign:MessageQueue}"
-            x:Name="SnackbarThree" Margin="11,1,11,0" Width="402" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Height="44" Grid.ColumnSpan="2" >
+            x:Name="SnackbarThree" IsActive="{Binding Snackbar.IsActive}"
+            Margin="11,1,11,0" Width="402" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Height="44" Grid.ColumnSpan="2" >
+            <materialDesign:SnackbarMessage
+                Content="{Binding Snackbar.Content}"/>
+
             <materialDesign:Snackbar.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -73,36 +117,22 @@
             </materialDesign:Snackbar.RenderTransform>
         </materialDesign:Snackbar>
 
-
-        <ItemsControl x:Name="ItemsControlCardsQuickTiming"  Margin="8,137,8,0">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <materialDesign:Card
-                        Margin="8,8,8,8">
-                        <Grid>
-                            <Button Height="50" Width="115" Click="ClickQuickTiming"
-                                    Background="White" BorderBrush="White"
-                                    Foreground="DarkSlateGray"
-                                    
-                                    >
-                        <StackPanel>
-                                <TextBlock Text="{Binding ActionType}"/>
-                                <TextBlock Text="{Binding ActionTime}"/>
-                        </StackPanel>
-                            </Button>
-                        </Grid>
-                        
-                        </materialDesign:Card>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
+        <ItemsControl x:Name="ItemsControlCardsQuickTiming" ItemsSource="{Binding Path=QuickTimings}" Margin="8,145,8,0">
+           <ItemsControl.ItemTemplateSelector>
+               <viewModel:ItemsControlQuickTimingDataTemplate 
+                   ItemQuickTiming="{StaticResource ItemQuickTiming}"
+                   ButtonAddItemQuickTiming="{StaticResource ButtonAddItemQuickTiming}"/>
+           </ItemsControl.ItemTemplateSelector>
+            
 
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-           
+
         </ItemsControl>
 
     </Grid>
+    </materialDesign:DialogHost>
 </Window>
