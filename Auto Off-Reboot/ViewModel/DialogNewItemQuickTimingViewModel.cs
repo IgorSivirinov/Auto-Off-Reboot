@@ -20,7 +20,6 @@ namespace Auto_Off_Reboot.ViewModel
 
         public event Action EventClickCancelButton;
 
-
         public string TextComboBox { get; set; } = "Выключить";
 
         private string _textBoxHours;
@@ -32,8 +31,7 @@ namespace Auto_Off_Reboot.ViewModel
                 int Num;
                 if (int.TryParse(value, out Num) && (0 <= int.Parse(value) && int.Parse(value) < 24))
                     _textBoxHours = value;
-                else _textBoxHours = "0";
-                OnPropertyChanged("TextBoxHours");
+                else _textBoxHours = null;
             }
         }
 
@@ -44,10 +42,10 @@ namespace Auto_Off_Reboot.ViewModel
             set
             {
                 int Num;
-                if (int.TryParse(value, out Num) && ( 0 <= int.Parse(value) && int.Parse(value) < 60))
+                if (int.TryParse(value, out Num) && (0 <= int.Parse(value) && int.Parse(value) < 60))
                     _textBoxMinutes = value;
-                else _textBoxMinutes = "0";
-                OnPropertyChanged("TextBoxMinutes");
+                else _textBoxHours = null; 
+                
             }
         }
 
@@ -57,14 +55,19 @@ namespace Auto_Off_Reboot.ViewModel
 
         public DialogNewItemQuickTimingViewModel()
         {
-            TextBoxMinutes = "0";
-            TextBoxHours = "0";
             ClickCancelButton = new DelegateCommand(o => EventClickCancelButton());
             ClickCreateButton = new DelegateCommand(o =>
+            {
+                if (_textBoxHours == null) TextBoxHours = "0";
+                if (_textBoxMinutes == null) TextBoxMinutes = "0";
+
                 EventClickCreateButton(new QuickTimingViewModel(
                         TextComboBox,
-                        int.Parse(TextBoxHours), 
-                        int.Parse(TextBoxMinutes))));
+                        int.Parse(TextBoxHours),
+                        int.Parse(TextBoxMinutes)));
+
+
+                });
         }
 
 

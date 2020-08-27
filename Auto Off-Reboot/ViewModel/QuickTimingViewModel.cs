@@ -13,12 +13,18 @@ namespace Auto_Off_Reboot.ViewModel
     {
         public bool IsButtonAdd { get; set; } = false;
 
-        public delegate void ClickItemQuickTiming(int id);
-        public event ClickItemQuickTiming EventClickItemQuickTiming;
-        public event ClickItemQuickTiming EventDeleteItem;
+        public event Action<int> EventClickItemQuickTiming;
+        public event Action<int> EventDeleteItem;
 
         public delegate void DelAddItem();
-        public event DelAddItem EventAddItem;
+        public event Action EventAddButtonAddItem;
+
+        public ICommand ButtonClick { get; private set; }
+
+        public ICommand DeleteMenuItem { get; set; }
+
+        public ICommand RunDialogAddItem { get; set; }
+
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -28,29 +34,44 @@ namespace Auto_Off_Reboot.ViewModel
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
 
-            public ICommand ButtonClick { get; private set; }
 
-            public ICommand AddItem { get; set; }
-
-            public ICommand ButtonRightClick { get; set; }
-
-            public ICommand DeleteMenuItem { get; set; }
-
-            public ICommand RunDialogAddItem { get; set; }
-
-
-
-            public QuickTimingViewModel(string actionType, int hours, int minutes) : base(actionType, hours, minutes)
+            public DateTime ActionTime
             {
-                ButtonClick = new DelegateCommand(o => EventClickItemQuickTiming(Id));
-                DeleteMenuItem = new DelegateCommand(o => EventDeleteItem(Id));
+                get
+                {
+                    return DateTime.Now.Add(ActionSpanTime);
+                }
+
             }
+
+            public string StringTime
+            {
+                get
+                {
+                    return (ActionSpanTime.Hours == 0 ? "" : ActionSpanTime.Hours + " Чac. ") +
+                           (ActionSpanTime.Minutes == 0 ? "" : ActionSpanTime.Minutes + " Мин. ");
+                }
+
+
+            }
+
+             public QuickTimingViewModel(string actionType, int hours, int minutes) : base(actionType, hours, minutes)
+             {
+                 ButtonClick = new DelegateCommand(o => EventClickItemQuickTiming(Id)); 
+                 DeleteMenuItem = new DelegateCommand(o => EventDeleteItem(Id));
+             }
+
+             public QuickTimingViewModel(QuickTiming quickTiming) : base(quickTiming)
+             {
+                 Id = quickTiming.Id;
+                 ButtonClick = new DelegateCommand(o => EventClickItemQuickTiming(Id));
+                 DeleteMenuItem = new DelegateCommand(o => EventDeleteItem(Id));
+             }
 
             public QuickTimingViewModel()
             {
                 IsButtonAdd = true;
-
-                RunDialogAddItem = new DelegateCommand(o=> EventAddItem());
+                RunDialogAddItem = new DelegateCommand(o=> EventAddButtonAddItem());
             }
 
     }

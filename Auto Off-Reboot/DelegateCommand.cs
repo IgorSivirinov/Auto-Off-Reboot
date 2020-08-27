@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using Caliburn.Micro;
-using Action = Caliburn.Micro.Action;
 
 namespace Auto_Off_Reboot
 {
